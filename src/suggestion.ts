@@ -273,8 +273,8 @@ export class Suggestion extends BaseModule implements Module {
                 if (!chan_store.suggestion.force) {
                     await message.reply(`${ctx.t(tt.you_may_want)}\n${parsed}`);
                 } else {
-                    await message.delete();
                     await message.reply(`<@${message.author.id}>: ${parsed}`);
+                    await message.delete();
                 }
             } else {
                 this.debug("good style");
