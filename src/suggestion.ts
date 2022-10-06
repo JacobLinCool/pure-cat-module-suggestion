@@ -58,7 +58,7 @@ export class Suggestion extends BaseModule implements Module {
             ...this.opt.sensitve_map,
         };
 
-        this.cc_converter = new OpenCC("s2tw.json");
+        this.cc_converter = new OpenCC("s2twp.json");
         this.custom_list_max_length = this.opt.custom_list_max_length ?? 100;
         this.custom_list_max_rule_size = this.opt.custom_list_max_rule_size ?? 20;
         this.controller_prefix = this.opt.controller_prefix ?? "!suggestion";
