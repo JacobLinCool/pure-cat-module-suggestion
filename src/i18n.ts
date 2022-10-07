@@ -15,6 +15,7 @@ export const t_suggestion_list_full = Symbol("suggestion:list-full");
 export const t_suggestion_list_entry_too_long = Symbol("suggestion:list-entry-too-long");
 export const t_suggestion_list_entry_not_found = Symbol("suggestion:list-entry-not-found");
 export const t_suggestion_list_invalid_json = Symbol("suggestion:list-invalid-json");
+export const t_suggestion_list_duplicated = Symbol("suggestion:list-duplicated");
 
 /**
  * The translate tokens.
@@ -36,6 +37,7 @@ export const tt = {
     suggestion_list_entry_too_long: t_suggestion_list_entry_too_long,
     suggestion_list_entry_not_found: t_suggestion_list_entry_not_found,
     suggestion_list_invalid_json: t_suggestion_list_invalid_json,
+    suggestion_list_duplicated: t_suggestion_list_duplicated,
 } as const;
 
 export const i18n_table = {
@@ -71,6 +73,7 @@ export const i18n_table = {
         [tt.suggestion_list_entry_too_long]: "Entry is too long.",
         [tt.suggestion_list_entry_not_found]: "Entry not found.",
         [tt.suggestion_list_invalid_json]: "Invalid JSON.",
+        [tt.suggestion_list_duplicated]: "Duplicated entry.",
     },
     zh: {
         [tt.you_may_want]: "你是不是想說：",
@@ -101,5 +104,6 @@ export const i18n_table = {
         [tt.suggestion_list_entry_too_long]: "詞語太長",
         [tt.suggestion_list_entry_not_found]: "詞語規則不存在",
         [tt.suggestion_list_invalid_json]: "無效的 JSON",
+        [tt.suggestion_list_duplicated]: "詞語規則重複",
     },
 };

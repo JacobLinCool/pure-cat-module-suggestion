@@ -10,6 +10,7 @@ import general from "case-police/dict/general.json";
 import products from "case-police/dict/products.json";
 import softwares from "case-police/dict/softwares.json";
 import { i18n_table, tt } from "./i18n";
+import { escape_regex, escape_md } from "./utils";
 
 export interface SuggestionOptions {
     pangu?: boolean;
@@ -119,7 +120,7 @@ export class Suggestion extends BaseModule implements Module {
             }
 
             const list_control = command.match(
-                /^(add|remove|list|clear|export|import|help)\s*([^]*)$/,
+                /^(add|remove|rm|list|ls|clear|export|import|help)\s*([^]*)$/,
             );
             if (list_control && chan_store?.suggestion) {
                 const action = list_control[1];
@@ -133,10 +134,10 @@ export class Suggestion extends BaseModule implements Module {
                         }
 
                         const [key, value] = arg.split("=>").map((s) => s.trim());
-                        if (
-                            key.length > this.custom_list_max_rule_size ||
-                            value.length > this.custom_list_max_rule_size
-                        ) {
+                        if (chan_store.suggestion.list.find(([k]) => k === key)) {
+                            await message.reply(ctx.t(tt.suggestion_list_duplicated));
+                            return;
+                        } else if (this.check_rule(key, value) === false) {
                             await message.reply(ctx.t(tt.suggestion_list_entry_too_long));
                             return;
                         }
@@ -146,6 +147,7 @@ export class Suggestion extends BaseModule implements Module {
                         await message.reply(ctx.t(tt.suggestion_list_add, { item: key }));
                         break;
                     }
+                    case "rm":
                     case "remove": {
                         const idx = chan_store.suggestion.list.findIndex(
                             ([key]) => key === arg.trim(),
@@ -160,12 +162,13 @@ export class Suggestion extends BaseModule implements Module {
                         await message.reply(ctx.t(tt.suggestion_list_remove, { item: arg }));
                         break;
                     }
+                    case "ls":
                     case "list": {
                         const list = chan_store.suggestion.list.map(
-                            ([key, value]) => `${key} => ${value}`,
+                            ([key, value]) => `**${escape_md(key)}** _=>_ **${escape_md(value)}**`,
                         );
                         await message.reply(
-                            ctx.t(tt.suggestion_list_list) + "\n```\n" + list.join("\n") + "\n```",
+                            `${ctx.t(tt.suggestion_list_list)}\n${list.join("\n")}`,
                         );
                         break;
                     }
@@ -208,10 +211,10 @@ export class Suggestion extends BaseModule implements Module {
                                     await message.reply(ctx.t(tt.suggestion_list_invalid_json));
                                     return;
                                 }
-                                if (
-                                    item[0].length > this.custom_list_max_rule_size ||
-                                    item[1].length > this.custom_list_max_rule_size
-                                ) {
+
+                                if (chan_store.suggestion.list.find(([k]) => k === item[0])) {
+                                    continue;
+                                } else if (this.check_rule(item[0], item[1]) === false) {
                                     await message.reply(ctx.t(tt.suggestion_list_entry_too_long));
                                     return;
                                 }
@@ -237,20 +240,23 @@ export class Suggestion extends BaseModule implements Module {
 
                 return;
             }
+
+            await message.reply(ctx.t(tt.suggestion_list_help, { prefix: this.controller_prefix }));
+            return;
         }
 
         if (chan_store?.suggestion?.enabled && !this.opt.pass?.(content)) {
             this.debug("checking style", content);
-            const slices = (this.opt.pangu === false ? content : pangu.spacing(content)).split(
+
+            let replaced = content;
+            for (const [key, value] of chan_store.suggestion.list) {
+                replaced = replaced.replace(new RegExp(escape_regex(key), "g"), value);
+            }
+
+            const slices = (this.opt.pangu === false ? replaced : pangu.spacing(replaced)).split(
                 /\s/g,
             );
             slices.forEach((slice, idx) => {
-                const custom = chan_store?.suggestion?.list.find(([key]) => key === slice);
-                if (custom !== undefined) {
-                    slices[idx] = custom[1];
-                    return;
-                }
-
                 if (slice in this.sensitive_map) {
                     slices[idx] = this.sensitive_map[slice];
                     return;
@@ -284,5 +290,17 @@ export class Suggestion extends BaseModule implements Module {
         }
 
         await next();
+    }
+
+    private check_rule(key: string, val: string): boolean {
+        if (!key || key.length > this.custom_list_max_rule_size) {
+            return false;
+        }
+
+        if (val.length > this.custom_list_max_rule_size) {
+            return false;
+        }
+
+        return true;
     }
 }
