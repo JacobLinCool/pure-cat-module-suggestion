@@ -12,7 +12,7 @@ export const t_suggestion_list_export = Symbol("suggestion:list-export");
 export const t_suggestion_list_import = Symbol("suggestion:list-import");
 export const t_suggestion_list_help = Symbol("suggestion:list-help");
 export const t_suggestion_list_full = Symbol("suggestion:list-full");
-export const t_suggestion_list_entry_too_long = Symbol("suggestion:list-entry-too-long");
+export const t_suggestion_list_invalid_rule = Symbol("suggestion:list-invalid-rule");
 export const t_suggestion_list_entry_not_found = Symbol("suggestion:list-entry-not-found");
 export const t_suggestion_list_invalid_json = Symbol("suggestion:list-invalid-json");
 export const t_suggestion_list_duplicated = Symbol("suggestion:list-duplicated");
@@ -34,7 +34,7 @@ export const tt = {
     suggestion_list_import: t_suggestion_list_import,
     suggestion_list_help: t_suggestion_list_help,
     suggestion_list_full: t_suggestion_list_full,
-    suggestion_list_entry_too_long: t_suggestion_list_entry_too_long,
+    suggestion_list_invalid_rule: t_suggestion_list_invalid_rule,
     suggestion_list_entry_not_found: t_suggestion_list_entry_not_found,
     suggestion_list_invalid_json: t_suggestion_list_invalid_json,
     suggestion_list_duplicated: t_suggestion_list_duplicated,
@@ -70,7 +70,7 @@ export const i18n_table = {
                 `\`${a.prefix} import <json>\`: Import suggestion rules from JSON.`,
             ].join("\n"),
         [tt.suggestion_list_full]: "Custom suggestion list is full.",
-        [tt.suggestion_list_entry_too_long]: "Entry is too long.",
+        [tt.suggestion_list_invalid_rule]: "Invalid suggestion rule.",
         [tt.suggestion_list_entry_not_found]: "Entry not found.",
         [tt.suggestion_list_invalid_json]: "Invalid JSON.",
         [tt.suggestion_list_duplicated]: "Duplicated entry.",
@@ -101,7 +101,7 @@ export const i18n_table = {
                 `\`${a.prefix} import <json>\`：從 JSON 匯入建議規則`,
             ].join("\n"),
         [tt.suggestion_list_full]: "自訂建議清單已滿",
-        [tt.suggestion_list_entry_too_long]: "詞語太長",
+        [tt.suggestion_list_invalid_rule]: "無效的建議規則",
         [tt.suggestion_list_entry_not_found]: "詞語規則不存在",
         [tt.suggestion_list_invalid_json]: "無效的 JSON",
         [tt.suggestion_list_duplicated]: "詞語規則重複",

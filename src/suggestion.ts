@@ -138,7 +138,7 @@ export class Suggestion extends BaseModule implements Module {
                             await message.reply(ctx.t(tt.suggestion_list_duplicated));
                             return;
                         } else if (this.check_rule(key, value) === false) {
-                            await message.reply(ctx.t(tt.suggestion_list_entry_too_long));
+                            await message.reply(ctx.t(tt.suggestion_list_invalid_rule));
                             return;
                         }
 
@@ -215,7 +215,7 @@ export class Suggestion extends BaseModule implements Module {
                                 if (chan_store.suggestion.list.find(([k]) => k === item[0])) {
                                     continue;
                                 } else if (this.check_rule(item[0], item[1]) === false) {
-                                    await message.reply(ctx.t(tt.suggestion_list_entry_too_long));
+                                    await message.reply(ctx.t(tt.suggestion_list_invalid_rule));
                                     return;
                                 }
                             }
@@ -293,6 +293,10 @@ export class Suggestion extends BaseModule implements Module {
     }
 
     private check_rule(key: string, val: string): boolean {
+        if (typeof key !== "string" || typeof val !== "string") {
+            return false;
+        }
+
         if (!key || key.length > this.custom_list_max_rule_size) {
             return false;
         }
