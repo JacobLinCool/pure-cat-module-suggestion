@@ -10,7 +10,7 @@ import general from "case-police/dict/general.json";
 import products from "case-police/dict/products.json";
 import softwares from "case-police/dict/softwares.json";
 import { i18n_table, tt } from "./i18n";
-import { escape_regex, escape_md } from "./utils";
+import { escape_md } from "./utils";
 
 export interface SuggestionOptions {
     pangu?: boolean;
@@ -250,7 +250,7 @@ export class Suggestion extends BaseModule implements Module {
 
             let replaced = content;
             for (const [key, value] of chan_store.suggestion.list) {
-                replaced = replaced.replace(new RegExp(escape_regex(key), "g"), value);
+                replaced = replaced.split(key).join(value);
             }
 
             const slices = (this.opt.pangu === false ? replaced : pangu.spacing(replaced)).split(
