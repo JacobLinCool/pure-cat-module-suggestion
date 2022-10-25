@@ -253,27 +253,33 @@ export class Suggestion extends BaseModule implements Module {
                 replaced = replaced.split(key).join(value);
             }
 
-            const slices = (this.opt.pangu === false ? replaced : pangu.spacing(replaced)).split(
-                /\s/g,
+            const lines = (this.opt.pangu === false ? replaced : pangu.spacing(replaced)).split(
+                /\n/g,
             );
-            slices.forEach((slice, idx) => {
-                if (slice in this.sensitive_map) {
-                    slices[idx] = this.sensitive_map[slice];
-                    return;
-                }
+            const result = [];
 
-                const lower = slice.toLowerCase();
-                if (lower in this.map) {
-                    slices[idx] = this.map[lower];
-                    return;
-                }
+            for (const line of lines) {
+                const slices = line.split(/\s/g);
+                slices.forEach((slice, idx) => {
+                    if (slice in this.sensitive_map) {
+                        slices[idx] = this.sensitive_map[slice];
+                        return;
+                    }
 
-                if (this.opt.opencc !== false) {
-                    slices[idx] = this.cc_converter.convertSync(slices[idx]);
-                }
-            });
+                    const lower = slice.toLowerCase();
+                    if (lower in this.map) {
+                        slices[idx] = this.map[lower];
+                        return;
+                    }
 
-            const parsed = slices.join(" ");
+                    if (this.opt.opencc !== false) {
+                        slices[idx] = this.cc_converter.convertSync(slices[idx]);
+                    }
+                });
+                result.push(slices.join(" "));
+            }
+
+            const parsed = result.join("\n");
             if (parsed !== content) {
                 this.debug("bad style", parsed);
                 if (!chan_store.suggestion.force) {
